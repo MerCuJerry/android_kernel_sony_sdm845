@@ -1,0 +1,40 @@
+name: Build Kernel
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    env:
+      args: |+
+        -j4 ARCH=arm64 O=out CC=clang
+        CROSS_COMPILE=aarch64-linux-gnu-
+        CROSS_COMPILE_ARM32=arm-linux-gnu-
+        CROSS_COMPILE_COMPAT=arm-linux-gnu-
+    rategy:
+      fail-fast: false
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Cross-compile toolchain
+        run: |
+          mkdir -p ".toolchain"
+          cd ".toolchain"
+          bash <(curl -s "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman") -S
+          cd ..
+      - name: Setup KernelSU
+        run: |
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+      - name: build Kernel
+        run: |
+          make clean
+          make ${args} tama_apollo_dcm_defconfig
+          make ${args}
+          cp out/arch/arm64/boot/Image.gz-dtb Anykernel3/
+      - name: Pack kernel image with Anykernel3
+        uses: action/upload-artifact@v4
+        with:
+          name: Mekuri_Kernel
+          path: |
+            Anykernel3/*
+            out/arch/arm64/boot/Image.gz-dtb
