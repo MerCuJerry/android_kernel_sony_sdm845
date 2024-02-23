@@ -12,7 +12,7 @@ jobs:
         CROSS_COMPILE=aarch64-linux-gnu-
         CROSS_COMPILE_ARM32=arm-linux-gnu-
         CROSS_COMPILE_COMPAT=arm-linux-gnu-
-    rategy:
+    strategy:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
@@ -30,7 +30,6 @@ jobs:
           make clean
           make ${args} tama_apollo_dcm_defconfig
           make ${args}
-          cp out/arch/arm64/boot/Image.gz-dtb Anykernel3/
       - name: Pack kernel image with Anykernel3
         uses: action/upload-artifact@v4
         with:
