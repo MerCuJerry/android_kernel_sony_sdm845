@@ -41,10 +41,10 @@ jobs:
           make clean && make mrproper
           make ${args} tama_apollo_dcm_defconfig
           make ${args}
-          cp out/arch/arm64/boot/Image.gz-dtb Anykernel3/
-      - name: Pack kernel image with Anykernel3
+          cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
+      - name: Pack kernel image with AnyKernel3
         uses: actions/upload-artifact@v4
         with:
           name: Mekuri_Kernel
           path: |
-            Anykernel3
+            AnyKernel3
