@@ -10,30 +10,41 @@ jobs:
       args: |+
         -j4 ARCH=arm64 O=out CC=clang
         CROSS_COMPILE=aarch64-linux-gnu-
-        CROSS_COMPILE_ARM32=arm-linux-gnu-
-        CROSS_COMPILE_COMPAT=arm-linux-gnu-
+        CROSS_COMPILE_ARM32=arm-linux-gnueabi-
+        CROSS_COMPILE_COMPAT=arm-linux-gnueabi-
     strategy:
       fail-fast: false
     steps:
       - uses: actions/checkout@v4
+      - name: Install Package
+        run: |
+          sudo apt install -y bc bison build-essential ccache curl flex g++-multilib gcc-multilib git git-lfs \
+          gnupg gperf imagemagick lib32ncurses5-dev lib32readline-dev lib32z1-dev libelf-dev liblz4-tool libncurses5 libncurses5-dev \
+          libsdl1.2-dev libssl-dev libxml2 libxml2-utils lzop pngcrush rsync \
+          schedtool squashfs-tools xsltproc gcc cpp \
+          zip zlib1g-dev p7zip-full
       - name: Setup Cross-compile toolchain
         run: |
-          mkdir -p ".toolchain"
-          cd ".toolchain"
-          bash <(curl -s "https://raw.githubusercontent.com/Neutron-Toolchains/antman/main/antman") -S
           cd ..
+          mkdir -p .toolchain
+          cd .toolchain
+          wget -q https://github.com/Mandi-Sa/clang/releases/download/amd64-kernel-arm-19/llvm19.0.0-binutils2.42.50_amd64-kernel-arm_20240204.7z
+          7za x llvm19.0.0-binutils2.42.50_amd64-kernel-arm_20240204.7z
+          rm llvm19.0.0-binutils2.42.50_amd64-kernel-arm_20240204.7z
       - name: Setup KernelSU
         run: |
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
       - name: build Kernel
         run: |
-          make clean
+          pwd
+          export PATH=$PWD/../.toolchain/bin:$PATH
+          make clean && make mrproper
           make ${args} tama_apollo_dcm_defconfig
           make ${args}
+          cp out/arch/arm64/boot/Image.gz-dtb Anykernel3/
       - name: Pack kernel image with Anykernel3
         uses: actions/upload-artifact@v4
         with:
           name: Mekuri_Kernel
           path: |
-            Anykernel3/*
-            out/arch/arm64/boot/Image.gz-dtb
+            Anykernel3
