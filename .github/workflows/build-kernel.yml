@@ -24,8 +24,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install Package
-        run: |
-          sudo apt install -y p7zip-full
+        run: sudo apt install -y p7zip-full
       - name: Setup Cross-compile toolchain
         run: |
           cd ..
