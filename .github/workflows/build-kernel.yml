@@ -12,14 +12,14 @@ jobs:
         CROSS_COMPILE=aarch64-linux-gnu-
         CROSS_COMPILE_ARM32=arm-linux-gnueabi-
         CROSS_COMPILE_COMPAT=arm-linux-gnueabi-
-    matrix:
-      devices:
-        - name: xz2c_dcm
-          config: tama_apollo_dcm_defconfig
-        - name: xz2c
-          config: tama_apollo_defconfig
     strategy:
       fail-fast: false
+      matrix:
+        devices:
+          - name: xz2c_dcm
+            config: tama_apollo_dcm_defconfig
+          - name: xz2c
+            config: tama_apollo_defconfig
     steps:
       - uses: actions/checkout@v4
       - name: Install Package
@@ -51,5 +51,5 @@ jobs:
       - name: Pack kernel image with AnyKernel3
         uses: actions/upload-artifact@v4
         with:
-          name: Kernel_${{ matrix.devices.name }}
+          name: ${{ matrix.devices.name }}_Kernel
           path: AnyKernel3
