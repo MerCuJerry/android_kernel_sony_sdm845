@@ -4,13 +4,14 @@
 ### AnyKernel setup
 # global properties
 properties() { '
-kernel.string=Mekuri Kernel by MerCuJerry
+kernel.string=Simple Kernel With KSU
 do.devicecheck=1
 do.modules=0
 do.systemless=0
 do.cleanup=1
 do.cleanuponabort=0
 device.name1=xz2c_dcm
+device.name2=xz2c
 supported.versions=13
 supported.patchlevels=
 supported.vendorpatchlevels=

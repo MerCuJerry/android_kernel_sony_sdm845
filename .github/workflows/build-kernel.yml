@@ -12,6 +12,12 @@ jobs:
         CROSS_COMPILE=aarch64-linux-gnu-
         CROSS_COMPILE_ARM32=arm-linux-gnueabi-
         CROSS_COMPILE_COMPAT=arm-linux-gnueabi-
+    matrix:
+      devices:
+        - name: xz2c_dcm
+          config: tama_apollo_dcm_defconfig
+        - name: xz2c
+          config: tama_apollo_defconfig
     strategy:
       fail-fast: false
     steps:
@@ -34,17 +40,16 @@ jobs:
       - name: Setup KernelSU
         run: |
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
-      - name: build Kernel
+      - name: Build Kernel for ${{ matrix.devices.name }}
         run: |
           pwd
           export PATH=$PWD/../.toolchain/bin:$PATH
           make clean && make mrproper
-          make ${args} tama_apollo_dcm_defconfig
+          make ${args} ${{ matrix.devices.config }}
           make ${args}
           cp out/arch/arm64/boot/Image.gz-dtb AnyKernel3/
       - name: Pack kernel image with AnyKernel3
         uses: actions/upload-artifact@v4
         with:
-          name: Mekuri_Kernel
-          path: |
-            AnyKernel3
+          name: Kernel_${{ matrix.devices.name }}
+          path: AnyKernel3
