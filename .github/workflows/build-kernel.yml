@@ -35,7 +35,7 @@ jobs:
           rm llvm20.0.0-binutils2.42_amd64-kernel-arm_static-20240906.7z
       - name: Setup KernelSU
         run: |
-          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s main
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -s v0.9.5
       - name: Build Kernel for ${{ matrix.devices.name }}
         run: |
           pwd
